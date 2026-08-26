@@ -19,7 +19,9 @@
 |-------|------|-------------|-------|
 | priority | string or null | Optional | Selected priority filter |
 | status | string or null | Optional | Selected status filter |
-| dueDate | string or null | Optional | Selected date filter |
+| dueDateScope | string | Optional, one of: `all`, `today`, `this_week`, `overdue`, `none` | Selected date filter; `all` means no date narrowing |
+
+Active filters combine with AND: a task must match every non-`all` filter to appear in the list.
 
 ## Relationships
 
@@ -30,10 +32,11 @@
 ## Validation Rules
 
 - Title MUST be present before a task can be saved.
-- Priority MUST be one of the supported values.
-- Status MUST be one of the allowed states.
-- Due date MUST be stored in a consistent ISO format for easy sorting and filtering.
+- Priority MUST be one of the supported values (`low`, `medium`, `high`); the UI MUST constrain input to these values rather than accepting free text.
+- Status MUST be one of the allowed states (`pending`, `in_progress`, `completed`); the UI MUST constrain input to these values rather than accepting free text.
+- Due date MUST be stored in a consistent ISO format (`YYYY-MM-DD`) for easy sorting and filtering; invalid input is rejected rather than silently stored.
 - Task status changes MUST update the modified timestamp.
+- A due date in the past is valid and MUST be preserved as-is; the app never modifies or clears it automatically.
 
 ## State Transitions
 

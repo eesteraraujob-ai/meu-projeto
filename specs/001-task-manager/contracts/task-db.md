@@ -27,7 +27,7 @@ This contract defines the local SQLite structure used by the task manager for pe
 
 ## Query expectations
 
-- Read all tasks ordered by due date or status as needed for display.
-- Filter by priority, status, or date in the application layer.
+- Read all tasks ordered by status then due date, as needed for display.
+- Filter by priority, status, or due-date scope (today, this week, overdue, no date) in the application layer, combining active filters with AND.
 - Update records when task properties change.
-- Delete or archive tasks only if the product scope later expands beyond the initial version.
+- Delete a task permanently on user request; there is no archive or soft-delete in this version.

@@ -62,7 +62,6 @@ app/
 ├── _layout.tsx
 ├── index.tsx
 ├── task/[id].tsx
-├── settings.tsx
 components/
 ├── TaskForm.tsx
 ├── TaskList.tsx
@@ -74,16 +73,13 @@ constants/
 db/
 ├── index.ts
 ├── tasks.ts
-hooks/
-├── useTaskFilters.ts
 lib/
 ├── date.ts
-├── format.ts
 types/
 ├── task.ts
 ```
 
-**Structure Decision**: A minimal single-app Expo structure with local SQLite database access and lightweight UI components is sufficient for the feature and aligns with the constitution’s simplicity requirement.
+**Structure Decision**: A minimal single-app Expo structure with local SQLite database access and lightweight UI components is sufficient for the feature and aligns with the constitution's simplicity requirement. No settings screen, custom hooks, or separate formatting module are introduced — none is required by any user story, and adding them would be speculative complexity. Filter state and list filtering are plain component state plus a memoized derivation, not a dedicated hook; date formatting stays in `lib/date.ts` alongside date parsing since the two are small enough not to warrant separate files. Presentational concerns (form, list, card, filter bar) are split out of the screen files into `components/` because a single screen mixing form, filters, list, and inline styles stops being readable as those pieces grow — each extracted component still does one job, matching Principle II.
 
 ## Complexity Tracking
 

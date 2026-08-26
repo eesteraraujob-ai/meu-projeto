@@ -23,6 +23,7 @@ A user wants a simple way to record the tasks they need to complete during the d
 1. **Given** the user has opened the task manager, **When** they create a task with a title, description, due date, priority, and status, **Then** the task appears in the list with the entered values preserved.
 2. **Given** a task already exists in the list, **When** the user edits the task details, **Then** the updated information is saved and shown in the task list.
 3. **Given** a task is marked as completed, **When** the user views the list, **Then** the task is shown with its completed state and remains identifiable as completed.
+4. **Given** a task the user no longer needs, **When** the user deletes it, **Then** the task is permanently removed and no longer appears in the list.
 
 ---
 
@@ -59,10 +60,10 @@ A user wants to move tasks from pending to in progress to completed so they can 
 
 ### Edge Cases
 
-- What happens when a user tries to save a task without a title?
-- How does the system handle tasks with a due date in the past?
-- What happens when a user applies multiple filters at the same time?
-- How does the system behave when a task is edited after it has already been marked completed?
+- Saving a task without a title is blocked; the user sees a clear message and the task is not created or updated (see FR-002).
+- A task with a due date in the past stays visible in the main list like any other task; it is never hidden or auto-changed. The date filter offers an "overdue" scope so the user can isolate these tasks on purpose.
+- Multiple filters apply together (priority AND status AND date scope); only tasks matching every active filter are shown. Combinations that match nothing show an explicit empty state rather than an error.
+- A completed task can still be edited and can be moved back to pending or in progress; completion is not a locked state.
 
 ## Requirements *(mandatory)*
 
@@ -74,10 +75,11 @@ A user wants to move tasks from pending to in progress to completed so they can 
 - **FR-004**: The system MUST allow users to edit an existing task after it has been created.
 - **FR-005**: The system MUST allow users to change a task status between pending, in progress, and completed.
 - **FR-006**: The system MUST support task priorities for daily organization.
-- **FR-007**: The system MUST allow users to filter the task list by priority, status, or date.
+- **FR-007**: The system MUST allow users to filter the task list by priority, status, or due-date scope (today, this week, overdue, or no date), and MUST allow combining more than one of these filters at the same time (combined filters narrow the list further, not replace each other).
 - **FR-008**: The system MUST display tasks clearly enough for the user to identify urgency, completion state, and due date.
-- **FR-009**: The system MUST keep task information updated after any create, edit, or status change.
+- **FR-009**: The system MUST keep task information updated after any create, edit, delete, or status change, including immediately reflecting edits made from a task's own detail screen back on the main list.
 - **FR-010**: The system MUST support review of tasks that are pending, in progress, or completed without losing task details.
+- **FR-011**: The system MUST allow users to permanently delete a task they no longer need.
 
 ### Key Entities *(include if feature involves data)*
 
