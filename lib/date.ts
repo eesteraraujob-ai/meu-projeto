@@ -21,3 +21,20 @@ export function formatDateLabel(value: string | null): string {
     year: 'numeric',
   });
 }
+
+export type DueDateScope = 'all' | 'today' | 'this_week' | 'overdue' | 'none';
+
+export function matchesDueDateScope(dueDate: string | null, scope: DueDateScope): boolean {
+  if (scope === 'all') return true;
+  if (scope === 'none') return dueDate === null;
+  if (!dueDate) return false;
+
+  const today = new Date().toISOString().slice(0, 10);
+  if (scope === 'overdue') return dueDate < today;
+  if (scope === 'today') return dueDate === today;
+
+  const weekEnd = new Date();
+  weekEnd.setDate(weekEnd.getDate() + 6);
+  const weekEndIso = weekEnd.toISOString().slice(0, 10);
+  return dueDate >= today && dueDate <= weekEndIso;
+}

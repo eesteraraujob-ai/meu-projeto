@@ -1,40 +1,63 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { createTask, deleteTask, getAllTasks, updateTask, Task, TaskPriority, TaskStatus } from '../db/tasks';
+import { useFocusEffect } from '@react-navigation/native';
+import TaskForm, { TaskFormValue } from '../components/TaskForm';
+import FilterBar, { TaskFilterValue } from '../components/FilterBar';
+import TaskList from '../components/TaskList';
+import { createTask, deleteTask, getAllTasks, updateTask } from '../db/tasks';
+import { matchesDueDateScope, normalizeDateInput } from '../lib/date';
+import { STATUS_LABELS, TASK_STATUSES } from '../constants/statuses';
+import { Task, TaskStatus } from '../types/task';
 
-const defaultForm = {
+const defaultForm: TaskFormValue = {
   title: '',
   description: '',
   dueDate: '',
-  priority: 'medium' as TaskPriority,
-  status: 'pending' as TaskStatus,
+  priority: 'medium',
+  status: 'pending',
+};
+
+const defaultFilter: TaskFilterValue = {
+  status: 'all',
+  priority: 'all',
+  dueDateScope: 'all',
 };
 
 export default function HomeScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [form, setForm] = useState(defaultForm);
-  const [filter, setFilter] = useState<{ status: TaskStatus | 'all'; priority: TaskPriority | 'all' }>({
-    status: 'all',
-    priority: 'all',
-  });
+  const [form, setForm] = useState<TaskFormValue>(defaultForm);
+  const [filter, setFilter] = useState<TaskFilterValue>(defaultFilter);
 
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     const list = await getAllTasks();
     setTasks(list);
-  };
-
-  useEffect(() => {
-    loadTasks();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTasks();
+    }, [loadTasks])
+  );
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       const statusMatch = filter.status === 'all' || task.status === filter.status;
       const priorityMatch = filter.priority === 'all' || task.priority === filter.priority;
-      return statusMatch && priorityMatch;
+      const dateMatch = matchesDueDateScope(task.dueDate, filter.dueDateScope);
+      return statusMatch && priorityMatch && dateMatch;
     });
   }, [tasks, filter]);
+
+  const statusCounts = useMemo(() => {
+    return tasks.reduce(
+      (counts, task) => {
+        counts[task.status] += 1;
+        return counts;
+      },
+      { pending: 0, in_progress: 0, completed: 0 } as Record<TaskStatus, number>
+    );
+  }, [tasks]);
 
   const handleCreate = async () => {
     if (!form.title.trim()) {
@@ -42,10 +65,16 @@ export default function HomeScreen() {
       return;
     }
 
+    const dueDate = normalizeDateInput(form.dueDate);
+    if (form.dueDate.trim() && !dueDate) {
+      Alert.alert('Data inválida', 'Informe a data no formato AAAA-MM-DD.');
+      return;
+    }
+
     await createTask({
       title: form.title.trim(),
       description: form.description.trim(),
-      dueDate: form.dueDate || null,
+      dueDate,
       priority: form.priority,
       status: form.status,
     });
@@ -64,120 +93,37 @@ export default function HomeScreen() {
     loadTasks();
   };
 
+  const handleEdit = (id: string) => {
+    router.push({ pathname: '/task/[id]', params: { id } });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Minhas tarefas</Text>
 
-      <View style={styles.formBox}>
-        <TextInput
-          value={form.title}
-          onChangeText={(value) => setForm((prev) => ({ ...prev, title: value }))}
-          placeholder="Título"
-          style={styles.input}
-        />
-        <TextInput
-          value={form.description}
-          onChangeText={(value) => setForm((prev) => ({ ...prev, description: value }))}
-          placeholder="Descrição"
-          style={[styles.input, styles.textArea]}
-          multiline
-        />
-        <TextInput
-          value={form.dueDate}
-          onChangeText={(value) => setForm((prev) => ({ ...prev, dueDate: value }))}
-          placeholder="Data de conclusão (YYYY-MM-DD)"
-          style={styles.input}
-        />
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Prioridade</Text>
-          <TextInput
-            value={form.priority}
-            onChangeText={(value) => setForm((prev) => ({ ...prev, priority: value as TaskPriority }))}
-            style={styles.inputSmall}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Status</Text>
-          <TextInput
-            value={form.status}
-            onChangeText={(value) => setForm((prev) => ({ ...prev, status: value as TaskStatus }))}
-            style={styles.inputSmall}
-          />
-        </View>
-
-        <Pressable style={styles.primaryButton} onPress={handleCreate}>
-          <Text style={styles.primaryButtonText}>Adicionar tarefa</Text>
-        </Pressable>
+      <View style={styles.summaryBox}>
+        {TASK_STATUSES.map((status) => (
+          <View key={status} style={styles.summaryItem}>
+            <Text style={styles.summaryCount}>{statusCounts[status]}</Text>
+            <Text style={styles.summaryLabel}>{STATUS_LABELS[status]}</Text>
+          </View>
+        ))}
       </View>
 
-      <View style={styles.filtersBox}>
-        <Text style={styles.sectionTitle}>Filtros</Text>
-        <View style={styles.filterRow}>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, status: 'all' })}>
-            <Text>Todos</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, status: 'pending' })}>
-            <Text>Pendentes</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, status: 'in_progress' })}>
-            <Text>Em andamento</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, status: 'completed' })}>
-            <Text>Concluídas</Text>
-          </Pressable>
-        </View>
+      <TaskForm value={form} onChange={setForm} onSubmit={handleCreate} submitLabel="Adicionar tarefa" />
 
-        <View style={styles.filterRow}>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, priority: 'all' })}>
-            <Text>Todas</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, priority: 'low' })}>
-            <Text>Baixa</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, priority: 'medium' })}>
-            <Text>Média</Text>
-          </Pressable>
-          <Pressable style={styles.filterButton} onPress={() => setFilter({ ...filter, priority: 'high' })}>
-            <Text>Alta</Text>
-          </Pressable>
-        </View>
-      </View>
+      <View style={styles.spacer} />
 
-      <View style={styles.taskList}>
-        {filteredTasks.length === 0 ? (
-          <Text style={styles.emptyText}>Nenhuma tarefa encontrada.</Text>
-        ) : (
-          filteredTasks.map((task) => (
-            <View key={task.id} style={styles.taskCard}>
-              <Text style={styles.taskTitle}>{task.title}</Text>
-              {task.description ? <Text>{task.description}</Text> : null}
-              {task.dueDate ? <Text>Data: {task.dueDate}</Text> : null}
-              <Text>Prioridade: {task.priority}</Text>
-              <Text>Status: {task.status}</Text>
+      <FilterBar filter={filter} onChange={setFilter} />
 
-              <View style={styles.taskActions}>
-                <Pressable
-                  style={styles.smallButton}
-                  onPress={() => router.push({ pathname: '/task/[id]', params: { id: task.id } })}
-                >
-                  <Text>Editar</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.smallButton}
-                  onPress={() => handleStatusChange(task.id, 'completed')}
-                >
-                  <Text>Concluir</Text>
-                </Pressable>
-                <Pressable style={styles.dangerButton} onPress={() => handleDelete(task.id)}>
-                  <Text>Excluir</Text>
-                </Pressable>
-              </View>
-            </View>
-          ))
-        )}
-      </View>
+      <View style={styles.spacer} />
+
+      <TaskList
+        tasks={filteredTasks}
+        onStatusChange={handleStatusChange}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </ScrollView>
   );
 }
@@ -185,62 +131,16 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
   title: { fontSize: 28, fontWeight: '700', marginBottom: 16 },
-  formBox: { backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 18 },
-  input: {
-    backgroundColor: '#f1f5f9',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 12,
-  },
-  textArea: { minHeight: 80, textAlignVertical: 'top' },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  label: { width: 100, fontWeight: '600' },
-  inputSmall: {
-    flex: 1,
-    backgroundColor: '#f1f5f9',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  primaryButton: {
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  primaryButtonText: { color: '#fff', fontWeight: '700' },
-  filtersBox: { backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 18 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8 },
-  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
-  filterButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#e2e8f0',
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  taskList: { gap: 12 },
-  taskCard: {
+  summaryBox: {
+    flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 12,
-    gap: 6,
+    marginBottom: 18,
+    justifyContent: 'space-around',
   },
-  taskTitle: { fontSize: 18, fontWeight: '700' },
-  taskActions: { flexDirection: 'row', marginTop: 8, gap: 8 },
-  smallButton: {
-    backgroundColor: '#e2e8f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  dangerButton: {
-    backgroundColor: '#fecaca',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  emptyText: { textAlign: 'center', color: '#64748b', paddingVertical: 16 },
+  summaryItem: { alignItems: 'center' },
+  summaryCount: { fontSize: 20, fontWeight: '700' },
+  summaryLabel: { color: '#64748b' },
+  spacer: { height: 18 },
 });

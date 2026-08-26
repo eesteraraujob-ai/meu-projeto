@@ -1,8 +1,6 @@
 import { db } from './index';
 import { Task, TaskInput, TaskPriority, TaskStatus } from '../types/task';
 
-export type { Task, TaskPriority, TaskStatus };
-
 function mapRow(row: any): Task {
   return {
     id: row.id,
