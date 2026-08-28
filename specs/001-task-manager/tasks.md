@@ -110,7 +110,7 @@
 - [ ] T026 [P] Fix tsconfig.json so `tsc --noEmit` runs cleanly (`ignoreDeprecations` targets an invalid TypeScript version) and add a `typecheck` script to package.json
 - [ ] T027 [US1] Refresh the task list whenever the home screen regains focus (e.g. expo-router's useFocusEffect), so edits and status changes made from app/task/[id].tsx are reflected without a manual reload (FR-009)
 - [ ] T028 [P] Consolidate Task/TaskPriority/TaskStatus imports to types/task.ts everywhere and remove the re-export from db/tasks.ts
-- [ ] T029 [P] Verify expo-sqlite works under `npm run web`; if it does not, either add the required web configuration or drop "web" from app.json platforms until it does
+- [x] T029 [P] Verify expo-sqlite works under `npm run web`; if it does not, either add the required web configuration or drop "web" from app.json platforms until it does — it did not (SQLite's web worker backend threw "Sync operation timeout" on init even with the required cross-origin isolation headers in place); dropped "web" from app.json platforms and reverted the web-only plumbing (scripts/web-dev-server.js, metro.config.js's header middleware, react-dom/react-native-web deps). The app targets iOS and Android only.
 
 **Checkpoint**: All Phase 7 items resolved before re-running T024's quickstart validation
 

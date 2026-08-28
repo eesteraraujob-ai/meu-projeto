@@ -80,22 +80,22 @@ Reabrir T009, T010, T013, T014, T015, T016, T018, T019, T020 e T024 (o quickstar
 
 - Padronizar em `types/task` e remover o re-export.
 
-### 13. Verificar o suporte a web de verdade
-`app.json` declara a plataforma `web` e o último commit menciona "suporte web", mas `expo-sqlite` na web exige configuração adicional e `db/index.ts` chama `initializeDb()` como efeito colateral de import ([db/index.ts:20](db/index.ts#L20)) — se falhar na web, o bundle inteiro quebra no carregamento.
+### 13. ~~Verificar o suporte a web de verdade~~ — Resolvido: web removido do escopo
+Testado em 27/08: mesmo com os headers de isolamento (`Cross-Origin-Opener-Policy`/`Cross-Origin-Embedder-Policy`) configurados via proxy dedicado, o backend web do `expo-sqlite` (worker + WebAssembly) travava na inicialização com `Uncaught Error: Sync operation timeout`, quebrando o app inteiro no carregamento (`db/index.ts` chama `initializeDb()` como efeito colateral de import). O produto é para iOS; web era um extra bolted-on que só adicionava complexidade (proxy de dev server, ajuste de headers no Metro, deps `react-dom`/`react-native-web`) sem funcionar de fato.
 
-- Rodar `npm run web` e confirmar. Se não funcionar, ou configurar o SQLite web ou remover `"web"` de `platforms`.
+- Decisão: remover `"web"` de `platforms` em `app.json`, apagar `scripts/web-dev-server.js`, reverter o header middleware em `metro.config.js` e as deps de web. Feito.
 
 ### 14. Repositório `async` sobre API síncrona
 Todas as funções de `db/tasks.ts` são `async` mas usam `getAllSync`/`runSync`. Não é bug, mas sugere I/O assíncrono que não existe. Manter como está (permite trocar de driver depois) ou simplificar para síncrono — escolha consciente, não acidental.
 
-### 15. `ignoreDeprecations` e `lib: ["esnext"]`
-O `tsconfig` sobrescreve `lib` sem incluir `dom`, apesar do alvo web. Compila hoje, mas revisar junto do item 13.
+### 15. ~~`ignoreDeprecations` e `lib: ["esnext"]`~~ — Resolvido junto com o item 13
+O `tsconfig` sobrescreve `lib` sem incluir `dom`. Isso deixou de ser um problema depois que o item 13 removeu o alvo web: sem web, não há necessidade de tipos de DOM.
 
 ---
 
 ## Ordem sugerida
 
-1. **Sanidade** — itens 5 e 13: fazer o typecheck e o `npm run web` passarem antes de mexer em feature.
+1. **Sanidade** — item 5: fazer o typecheck passar antes de mexer em feature. (Item 13 resolvido removendo o alvo web.)
 2. **Fechar as user stories** — itens 1, 2, 3, 4, 7, 8: é o que falta para spec e código baterem.
 3. **Limpeza** — itens 6, 9, 11, 12: consolidar depois que o comportamento estiver correto.
 4. **Sincronizar a documentação** — item 10 e reexecutar o [quickstart](specs/001-task-manager/quickstart.md) inteiro como validação manual final.

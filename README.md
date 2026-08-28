@@ -12,7 +12,7 @@ Aplicativo local-first: os dados ficam em um banco SQLite no próprio dispositiv
 | Runtime | React Native 0.81 via Expo SDK 54 |
 | Navegação | Expo Router 6 (file-based, typed routes) |
 | Persistência | expo-sqlite (API síncrona) |
-| Plataformas | iOS, Android e Web |
+| Plataformas | iOS e Android |
 
 O projeto é guiado pelo Spec Kit — especificação, plano e tarefas vivem em [specs/](specs/) e as regras de projeto em [.specify/memory/constitution.md](.specify/memory/constitution.md).
 
@@ -30,7 +30,6 @@ Atalhos por plataforma:
 ```bash
 npm run android
 npm run ios
-npm run web
 ```
 
 Não há suíte de testes automatizados — a validação é manual, por decisão registrada na constituição do projeto. O roteiro de verificação está em [quickstart.md](specs/001-task-manager/quickstart.md).
@@ -51,7 +50,7 @@ types/task.ts           tipos Task, TaskInput, TaskStatus, TaskPriority
 specs/001-task-manager/ spec, plano, modelo de dados, contrato e tarefas
 ```
 
-> A pasta `components/` existe mas está vazia: hoje toda a UI está inline nas telas. Ver [TODO.md](TODO.md).
+A UI é dividida em `TaskForm`, `TaskList`, `TaskCard` e `FilterBar` dentro de `components/`.
 
 ## Modelo de dados
 
@@ -98,4 +97,4 @@ A [constituição](.specify/memory/constitution.md) é a referência para qualqu
 
 ## Estado atual
 
-O núcleo funciona: criar, listar, editar, concluir e excluir tarefas, com filtros por status e prioridade. Há lacunas conhecidas entre o que a spec pede e o que está implementado — filtro por data, validação de prioridade/status e atualização da lista após edição. O levantamento completo e os próximos passos estão em [TODO.md](TODO.md).
+O núcleo funciona: criar, listar, editar, excluir e mudar o status de tarefas (pendente ↔ em andamento ↔ concluída), com filtros por status, prioridade e data. O app é focado em iOS e Android — o suporte a Web foi tentado e removido: o backend web do `expo-sqlite` (worker + WebAssembly) travava na inicialização (`Sync operation timeout`) mesmo com os headers de isolamento configurados. O levantamento completo e os próximos passos estão em [TODO.md](TODO.md).
