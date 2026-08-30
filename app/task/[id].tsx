@@ -19,23 +19,19 @@ export default function TaskDetailScreen() {
   const [form, setForm] = useState<TaskFormValue>(emptyForm);
 
   useEffect(() => {
-    const loadTask = async () => {
-      if (!id) return;
-      const task = await getTaskById(id);
-      if (!task) return;
-      setForm({
-        title: task.title,
-        description: task.description ?? '',
-        dueDate: task.dueDate ?? '',
-        priority: task.priority,
-        status: task.status,
-      });
-    };
-
-    loadTask();
+    if (!id) return;
+    const task = getTaskById(id);
+    if (!task) return;
+    setForm({
+      title: task.title,
+      description: task.description ?? '',
+      dueDate: task.dueDate ?? '',
+      priority: task.priority,
+      status: task.status,
+    });
   }, [id]);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!id || !form.title.trim()) {
       Alert.alert('Título obrigatório', 'O título da tarefa não pode ficar vazio.');
       return;
@@ -47,7 +43,7 @@ export default function TaskDetailScreen() {
       return;
     }
 
-    await updateTask(id, {
+    updateTask(id, {
       title: form.title.trim(),
       description: form.description.trim(),
       dueDate,

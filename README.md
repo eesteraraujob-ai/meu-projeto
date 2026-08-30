@@ -76,12 +76,14 @@ Contrato completo em [contracts/task-db.md](specs/001-task-manager/contracts/tas
 Todas as funções ficam em [db/tasks.ts](db/tasks.ts):
 
 ```ts
-getAllTasks(): Promise<Task[]>
-getTaskById(id: string): Promise<Task | null>
-createTask(input: TaskInput): Promise<Task>
-updateTask(id: string, patches: Partial<TaskInput>): Promise<Task | null>
-deleteTask(id: string): Promise<void>
+getAllTasks(): Task[]
+getTaskById(id: string): Task | null
+createTask(input: TaskInput): Task
+updateTask(id: string, patches: Partial<TaskInput>): Task | null
+deleteTask(id: string): void
 ```
+
+Funções síncronas de propósito — refletem a API síncrona do `expo-sqlite` (`getAllSync`/`runSync`) usada por baixo, sem I/O assíncrono real a esconder.
 
 As queries são SQL direto, sem camada de abstração — decisão registrada em [research.md](specs/001-task-manager/research.md).
 

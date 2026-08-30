@@ -14,7 +14,7 @@ function mapRow(row: any): Task {
   };
 }
 
-export async function getAllTasks(): Promise<Task[]> {
+export function getAllTasks(): Task[] {
   const rows = db.getAllSync(
     'SELECT * FROM tasks ORDER BY CASE status WHEN ? THEN 0 WHEN ? THEN 1 WHEN ? THEN 2 ELSE 3 END, due_date IS NULL, due_date ASC, updated_at DESC',
     'pending',
@@ -25,12 +25,12 @@ export async function getAllTasks(): Promise<Task[]> {
   return rows.map(mapRow);
 }
 
-export async function getTaskById(id: string): Promise<Task | null> {
+export function getTaskById(id: string): Task | null {
   const row = db.getFirstSync('SELECT * FROM tasks WHERE id = ?', id);
   return row ? mapRow(row) : null;
 }
 
-export async function createTask(input: TaskInput): Promise<Task> {
+export function createTask(input: TaskInput): Task {
   const now = new Date().toISOString();
   const task: Task = {
     id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
@@ -58,8 +58,8 @@ export async function createTask(input: TaskInput): Promise<Task> {
   return task;
 }
 
-export async function updateTask(id: string, patches: Partial<TaskInput> & { status?: TaskStatus; priority?: TaskPriority }): Promise<Task | null> {
-  const current = await getTaskById(id);
+export function updateTask(id: string, patches: Partial<TaskInput> & { status?: TaskStatus; priority?: TaskPriority }): Task | null {
+  const current = getTaskById(id);
   if (!current) return null;
 
   const next: Task = {
@@ -82,6 +82,6 @@ export async function updateTask(id: string, patches: Partial<TaskInput> & { sta
   return next;
 }
 
-export async function deleteTask(id: string): Promise<void> {
+export function deleteTask(id: string): void {
   db.runSync('DELETE FROM tasks WHERE id = ?', id);
 }

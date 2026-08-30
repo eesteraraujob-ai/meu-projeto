@@ -29,9 +29,8 @@ export default function HomeScreen() {
   const [form, setForm] = useState<TaskFormValue>(defaultForm);
   const [filter, setFilter] = useState<TaskFilterValue>(defaultFilter);
 
-  const loadTasks = useCallback(async () => {
-    const list = await getAllTasks();
-    setTasks(list);
+  const loadTasks = useCallback(() => {
+    setTasks(getAllTasks());
   }, []);
 
   useFocusEffect(
@@ -59,7 +58,7 @@ export default function HomeScreen() {
     );
   }, [tasks]);
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!form.title.trim()) {
       Alert.alert('Título obrigatório', 'Informe um título para salvar a tarefa.');
       return;
@@ -71,7 +70,7 @@ export default function HomeScreen() {
       return;
     }
 
-    await createTask({
+    createTask({
       title: form.title.trim(),
       description: form.description.trim(),
       dueDate,
@@ -83,13 +82,13 @@ export default function HomeScreen() {
     loadTasks();
   };
 
-  const handleDelete = async (id: string) => {
-    await deleteTask(id);
+  const handleDelete = (id: string) => {
+    deleteTask(id);
     loadTasks();
   };
 
-  const handleStatusChange = async (id: string, nextStatus: TaskStatus) => {
-    await updateTask(id, { status: nextStatus });
+  const handleStatusChange = (id: string, nextStatus: TaskStatus) => {
+    updateTask(id, { status: nextStatus });
     loadTasks();
   };
 

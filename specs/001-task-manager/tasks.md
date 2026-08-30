@@ -48,12 +48,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Extract the task form UI and validation flow into components/TaskForm.tsx (currently inline in app/index.tsx)
-- [ ] T010 [P] [US1] Extract the task list display and per-task card view into components/TaskList.tsx and components/TaskCard.tsx (currently inline in app/index.tsx)
+- [x] T009 [P] [US1] Extract the task form UI and validation flow into components/TaskForm.tsx (currently inline in app/index.tsx)
+- [x] T010 [P] [US1] Extract the task list display and per-task card view into components/TaskList.tsx and components/TaskCard.tsx (currently inline in app/index.tsx)
 - [x] T011 [US1] Implement task creation and editing flow from app/index.tsx and app/task/[id].tsx
 - [x] T012 [US1] Connect the form and list screens to the SQLite repository for create, read, and update operations
-- [ ] T013 [US1] Expose all status transitions (pending -> in progress, in progress -> completed, and reopening a completed task back to pending or in progress) as direct actions on the task card, not just "mark completed"
-- [ ] T014 [US1] Replace free-text priority and status inputs with selectors constrained to TASK_PRIORITIES and TASK_STATUSES (constants/priorities.ts, constants/statuses.ts) in both app/index.tsx and app/task/[id].tsx; keep the required-title guard
+- [x] T013 [US1] Expose all status transitions (pending -> in progress, in progress -> completed, and reopening a completed task back to pending or in progress) as direct actions on the task card, not just "mark completed"
+- [x] T014 [US1] Replace free-text priority and status inputs with selectors constrained to TASK_PRIORITIES and TASK_STATUSES (constants/priorities.ts, constants/statuses.ts) in both app/index.tsx and app/task/[id].tsx; keep the required-title guard
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -67,10 +67,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T015 [P] [US2] Extract the filter controls UI into components/FilterBar.tsx (currently inline in app/index.tsx)
-- [ ] T016 [US2] Implement filter state handling and list filtering logic for priority, status, and due-date scope (all, today, this_week, overdue, none per data-model.md); combine active filters with AND
+- [x] T015 [P] [US2] Extract the filter controls UI into components/FilterBar.tsx (currently inline in app/index.tsx)
+- [x] T016 [US2] Implement filter state handling and list filtering logic for priority, status, and due-date scope (all, today, this_week, overdue, none per data-model.md); combine active filters with AND
 - [x] T017 [US2] Connect filtered results to the task list rendering and empty-state behavior
-- [ ] T018 [US2] Add a due-date scope helper (today, this week, overdue, no date) used by the in-memory filter from T016, on top of the existing status-then-due-date sort already returned by getAllTasks in db/tasks.ts (filtering stays UI-driven per research.md)
+- [x] T018 [US2] Add a due-date scope helper (today, this week, overdue, no date) used by the in-memory filter from T016, on top of the existing status-then-due-date sort already returned by getAllTasks in db/tasks.ts (filtering stays UI-driven per research.md)
 
 **Checkpoint**: At this point, User Stories 1 and 2 should both work independently
 
@@ -84,9 +84,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T019 [P] [US3] Add a status summary (counts of pending, in progress, completed) to the top of the main task screen
+- [x] T019 [P] [US3] Add a status summary (counts of pending, in progress, completed) to the top of the main task screen
 - [x] T020 [US3] Implement task state transitions and update timestamps in the database layer (db/tasks.ts already sets updatedAt on every update; UI exposure tracked in T013)
-- [ ] T021 [US3] Review task detail display to ensure completion state and metadata remain readable once T014's status/priority selectors are in place
+- [x] T021 [US3] Review task detail display to ensure completion state and metadata remain readable once T014's status/priority selectors are in place
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -96,10 +96,10 @@
 
 **Purpose**: Final cleanup and quality pass across the complete feature
 
-- [ ] T022 [P] Review all screens and components for small-scope readability and consistent naming, once T009/T010/T015 split the screens into components
-- [ ] T023 [P] Clean up duplicate logic and reduce unnecessary complexity across the task flow
-- [ ] T024 Verify app behavior against the quickstart scenarios in specs/001-task-manager/quickstart.md
-- [ ] T025 Ensure the app remains aligned with the project constitution: small scope, clean code, and no automated test requirement
+- [x] T022 [P] Review all screens and components for small-scope readability and consistent naming, once T009/T010/T015 split the screens into components
+- [x] T023 [P] Clean up duplicate logic and reduce unnecessary complexity across the task flow
+- [ ] T024 Verify app behavior against the quickstart scenarios in specs/001-task-manager/quickstart.md — blocked: needs a real device/simulator run, not yet completed (last attempt via Expo Go over LAN failed with "fetch failed", likely router client/AP isolation; pending a retry on the user's home network)
+- [x] T025 Ensure the app remains aligned with the project constitution: small scope, clean code, and no automated test requirement
 
 ---
 
@@ -107,9 +107,9 @@
 
 **Purpose**: Close gaps found when reviewing the shipped code against this spec; required before Phase 6 polish can be validated
 
-- [ ] T026 [P] Fix tsconfig.json so `tsc --noEmit` runs cleanly (`ignoreDeprecations` targets an invalid TypeScript version) and add a `typecheck` script to package.json
-- [ ] T027 [US1] Refresh the task list whenever the home screen regains focus (e.g. expo-router's useFocusEffect), so edits and status changes made from app/task/[id].tsx are reflected without a manual reload (FR-009)
-- [ ] T028 [P] Consolidate Task/TaskPriority/TaskStatus imports to types/task.ts everywhere and remove the re-export from db/tasks.ts
+- [x] T026 [P] Fix tsconfig.json so `tsc --noEmit` runs cleanly (`ignoreDeprecations` targets an invalid TypeScript version) and add a `typecheck` script to package.json
+- [x] T027 [US1] Refresh the task list whenever the home screen regains focus (e.g. expo-router's useFocusEffect), so edits and status changes made from app/task/[id].tsx are reflected without a manual reload (FR-009)
+- [x] T028 [P] Consolidate Task/TaskPriority/TaskStatus imports to types/task.ts everywhere and remove the re-export from db/tasks.ts
 - [x] T029 [P] Verify expo-sqlite works under `npm run web`; if it does not, either add the required web configuration or drop "web" from app.json platforms until it does — it did not (SQLite's web worker backend threw "Sync operation timeout" on init even with the required cross-origin isolation headers in place); dropped "web" from app.json platforms and reverted the web-only plumbing (scripts/web-dev-server.js, metro.config.js's header middleware, react-dom/react-native-web deps). The app targets iOS and Android only.
 
 **Checkpoint**: All Phase 7 items resolved before re-running T024's quickstart validation
