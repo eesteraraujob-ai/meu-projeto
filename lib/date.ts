@@ -26,28 +26,32 @@ export function normalizeDateInput(value: string): string | null {
 
 export function formatDateLabel(value: string | null): string {
   if (!value) return 'Sem data';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return value;
+  const [, year, month, day] = match;
+  return `${day}/${month}/${year}`;
 }
 
 export type DueDateScope = 'all' | 'today' | 'this_week' | 'overdue' | 'none';
+
+function localIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export function matchesDueDateScope(dueDate: string | null, scope: DueDateScope): boolean {
   if (scope === 'all') return true;
   if (scope === 'none') return dueDate === null;
   if (!dueDate) return false;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localIsoDate(new Date());
   if (scope === 'overdue') return dueDate < today;
   if (scope === 'today') return dueDate === today;
 
   const weekEnd = new Date();
   weekEnd.setDate(weekEnd.getDate() + 6);
-  const weekEndIso = weekEnd.toISOString().slice(0, 10);
+  const weekEndIso = localIsoDate(weekEnd);
   return dueDate >= today && dueDate <= weekEndIso;
 }
