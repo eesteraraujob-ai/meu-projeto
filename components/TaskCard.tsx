@@ -37,7 +37,7 @@ export default function TaskCard({ task, onStatusChange, onEdit, onDelete }: Tas
       <Text>Status: {STATUS_LABELS[task.status]}</Text>
 
       <View style={styles.actions}>
-        {STATUS_TRANSITIONS[task.status].map((transition) => (
+        {(STATUS_TRANSITIONS[task.status] ?? []).map((transition) => (
           <Pressable
             key={transition.status}
             style={styles.smallButton}

@@ -39,7 +39,7 @@ export default function TaskDetailScreen() {
 
     const dueDate = normalizeDateInput(form.dueDate);
     if (form.dueDate.trim() && !dueDate) {
-      Alert.alert('Data inválida', 'Informe a data no formato AAAA-MM-DD.');
+      Alert.alert('Data inválida', 'Informe a data no formato DD/MM/AAAA ou AAAA-MM-DD.');
       return;
     }
 

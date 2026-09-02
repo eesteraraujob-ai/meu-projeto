@@ -42,7 +42,7 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
       <TextInput
         value={value.dueDate}
         onChangeText={(text) => setField('dueDate', text)}
-        placeholder="Data de conclusão (AAAA-MM-DD)"
+        placeholder="Data de conclusão (DD/MM/AAAA ou AAAA-MM-DD)"
         style={styles.input}
       />
 
