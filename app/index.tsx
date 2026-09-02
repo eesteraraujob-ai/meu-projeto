@@ -1,18 +1,21 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import TaskForm, { TaskFormValue } from '../components/TaskForm';
 import FilterBar, { TaskFilterValue } from '../components/FilterBar';
 import TaskList from '../components/TaskList';
 import { createTask, deleteTask, getAllTasks, updateTask } from '../db/tasks';
-import { matchesDueDateScope, normalizeDateInput } from '../lib/date';
+import { matchesDueDateScope, normalizeDateInput, normalizeTimeInput } from '../lib/date';
 import { STATUS_LABELS, TASK_STATUSES } from '../constants/statuses';
 import { Task, TaskStatus } from '../types/task';
 
 const defaultForm: TaskFormValue = {
   title: '',
   description: '',
+  startDate: '',
+  startTime: '',
   dueDate: '',
   priority: 'medium',
   status: 'pending',
@@ -25,6 +28,7 @@ const defaultFilter: TaskFilterValue = {
 };
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [form, setForm] = useState<TaskFormValue>(defaultForm);
   const [filter, setFilter] = useState<TaskFilterValue>(defaultFilter);
@@ -64,15 +68,29 @@ export default function HomeScreen() {
       return;
     }
 
+    const startDate = normalizeDateInput(form.startDate);
+    if (form.startDate.trim() && !startDate) {
+      Alert.alert('Data inválida', 'Informe a data de início no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      return;
+    }
+
+    const startTime = normalizeTimeInput(form.startTime);
+    if (form.startTime.trim() && !startTime) {
+      Alert.alert('Hora inválida', 'Informe a hora de início no formato HH:MM.');
+      return;
+    }
+
     const dueDate = normalizeDateInput(form.dueDate);
     if (form.dueDate.trim() && !dueDate) {
-      Alert.alert('Data inválida', 'Informe a data no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      Alert.alert('Data inválida', 'Informe a data de conclusão no formato DD/MM/AAAA ou AAAA-MM-DD.');
       return;
     }
 
     createTask({
       title: form.title.trim(),
       description: form.description.trim(),
+      startDate,
+      startTime,
       dueDate,
       priority: form.priority,
       status: form.status,
@@ -97,7 +115,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
       <Text style={styles.title}>Minhas tarefas</Text>
 
       <View style={styles.summaryBox}>

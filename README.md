@@ -61,6 +61,8 @@ Tabela única `tasks`, criada automaticamente na primeira execução por `initia
 | `id` | TEXT | sim | chave primária, gerada no app |
 | `title` | TEXT | sim | não pode ser vazio |
 | `description` | TEXT | não | |
+| `start_date` | TEXT | não | data ISO (`YYYY-MM-DD`) |
+| `start_time` | TEXT | não | hora (`HH:MM`, 24h) |
 | `due_date` | TEXT | não | data ISO (`YYYY-MM-DD`) |
 | `priority` | TEXT | sim | `low` \| `medium` \| `high` |
 | `status` | TEXT | sim | `pending` \| `in_progress` \| `completed` |

@@ -5,9 +5,7 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#0f172a' },
-        headerTintColor: '#fff',
-        headerTitle: 'Task Manager',
+        headerShown: false,
       }}
     />
   );

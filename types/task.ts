@@ -5,6 +5,8 @@ export interface Task {
   id: string;
   title: string;
   description: string;
+  startDate: string | null;
+  startTime: string | null;
   dueDate: string | null;
   priority: TaskPriority;
   status: TaskStatus;
@@ -15,6 +17,8 @@ export interface Task {
 export interface TaskInput {
   title: string;
   description?: string;
+  startDate?: string | null;
+  startTime?: string | null;
   dueDate?: string | null;
   priority: TaskPriority;
   status: TaskStatus;

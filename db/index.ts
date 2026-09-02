@@ -8,6 +8,8 @@ export function initializeDb() {
       id TEXT PRIMARY KEY NOT NULL,
       title TEXT NOT NULL,
       description TEXT,
+      start_date TEXT,
+      start_time TEXT,
       due_date TEXT,
       priority TEXT NOT NULL,
       status TEXT NOT NULL,
@@ -15,6 +17,14 @@ export function initializeDb() {
       updated_at TEXT NOT NULL
     );
   `);
+
+  const columns = db.getAllSync<{ name: string }>('PRAGMA table_info(tasks)');
+  const columnNames = new Set(columns.map((column) => column.name));
+  for (const column of ['start_date', 'start_time']) {
+    if (!columnNames.has(column)) {
+      db.execSync(`ALTER TABLE tasks ADD COLUMN ${column} TEXT`);
+    }
+  }
 }
 
 initializeDb();

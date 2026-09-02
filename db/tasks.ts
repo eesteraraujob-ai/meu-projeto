@@ -6,6 +6,8 @@ function mapRow(row: any): Task {
     id: row.id,
     title: row.title,
     description: row.description ?? '',
+    startDate: row.start_date ?? null,
+    startTime: row.start_time ?? null,
     dueDate: row.due_date ?? null,
     priority: row.priority as TaskPriority,
     status: row.status as TaskStatus,
@@ -36,6 +38,8 @@ export function createTask(input: TaskInput): Task {
     id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
     title: input.title,
     description: input.description ?? '',
+    startDate: input.startDate ?? null,
+    startTime: input.startTime ?? null,
     dueDate: input.dueDate ?? null,
     priority: input.priority,
     status: input.status,
@@ -44,10 +48,12 @@ export function createTask(input: TaskInput): Task {
   };
 
   db.runSync(
-    'INSERT INTO tasks (id, title, description, due_date, priority, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO tasks (id, title, description, start_date, start_time, due_date, priority, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     task.id,
     task.title,
     task.description,
+    task.startDate,
+    task.startTime,
     task.dueDate,
     task.priority,
     task.status,
@@ -69,9 +75,11 @@ export function updateTask(id: string, patches: Partial<TaskInput> & { status?: 
   };
 
   db.runSync(
-    'UPDATE tasks SET title = ?, description = ?, due_date = ?, priority = ?, status = ?, updated_at = ? WHERE id = ?',
+    'UPDATE tasks SET title = ?, description = ?, start_date = ?, start_time = ?, due_date = ?, priority = ?, status = ?, updated_at = ? WHERE id = ?',
     next.title,
     next.description,
+    next.startDate,
+    next.startTime,
     next.dueDate,
     next.priority,
     next.status,

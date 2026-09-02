@@ -7,6 +7,8 @@ import { TaskPriority, TaskStatus } from '../types/task';
 export interface TaskFormValue {
   title: string;
   description: string;
+  startDate: string;
+  startTime: string;
   dueDate: string;
   priority: TaskPriority;
   status: TaskStatus;
@@ -38,6 +40,19 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
         placeholder="Descrição"
         style={[styles.input, styles.textArea]}
         multiline
+      />
+      <TextInput
+        value={value.startDate}
+        onChangeText={(text) => setField('startDate', text)}
+        placeholder="Data de início (DD/MM/AAAA ou AAAA-MM-DD)"
+        style={styles.input}
+      />
+      <TextInput
+        value={value.startTime}
+        onChangeText={(text) => setField('startTime', text)}
+        placeholder="Hora de início (HH:MM)"
+        style={styles.input}
+        keyboardType="numbers-and-punctuation"
       />
       <TextInput
         value={value.dueDate}

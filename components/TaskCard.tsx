@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { PRIORITY_LABELS } from '../constants/priorities';
 import { STATUS_LABELS } from '../constants/statuses';
-import { formatDateLabel } from '../lib/date';
+import { formatDateLabel, formatTimeLabel } from '../lib/date';
 import { Task, TaskStatus } from '../types/task';
 
 const STATUS_TRANSITIONS: Record<TaskStatus, { status: TaskStatus; label: string }[]> = {
@@ -32,7 +32,8 @@ export default function TaskCard({ task, onStatusChange, onEdit, onDelete }: Tas
     <View style={styles.card}>
       <Text style={styles.title}>{task.title}</Text>
       {task.description ? <Text>{task.description}</Text> : null}
-      <Text>Data: {formatDateLabel(task.dueDate)}</Text>
+      <Text>Início: {formatDateLabel(task.startDate)} · {formatTimeLabel(task.startTime)}</Text>
+      <Text>Conclusão: {formatDateLabel(task.dueDate)}</Text>
       <Text>Prioridade: {PRIORITY_LABELS[task.priority]}</Text>
       <Text>Status: {STATUS_LABELS[task.status]}</Text>
 

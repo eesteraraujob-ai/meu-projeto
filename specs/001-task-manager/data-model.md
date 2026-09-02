@@ -7,6 +7,8 @@
 | id | string | Required, unique | Internal identifier for the task |
 | title | string | Required, non-empty | Short task name |
 | description | string | Optional | Additional task details |
+| startDate | string | Optional | ISO date representing when work on the task begins |
+| startTime | string | Optional | Time of day (`HH:MM`, 24h) paired with startDate |
 | dueDate | string | Optional | ISO date representing completion or target date |
 | priority | string | Required | Values: low, medium, high |
 | status | string | Required | Values: pending, in_progress, completed |
@@ -34,7 +36,9 @@ Active filters combine with AND: a task must match every non-`all` filter to app
 - Title MUST be present before a task can be saved.
 - Priority MUST be one of the supported values (`low`, `medium`, `high`); the UI MUST constrain input to these values rather than accepting free text.
 - Status MUST be one of the allowed states (`pending`, `in_progress`, `completed`); the UI MUST constrain input to these values rather than accepting free text.
-- Due date MUST be stored in a consistent ISO format (`YYYY-MM-DD`) for easy sorting and filtering; invalid input is rejected rather than silently stored.
+- Start date and due date MUST each be stored in a consistent ISO format (`YYYY-MM-DD`) for easy sorting and filtering; invalid input is rejected rather than silently stored. Input MAY be entered as `DD/MM/YYYY` or `DD-MM-YYYY` and is normalized to ISO on save.
+- Start date and due date are independent fields with no ordering constraint between them.
+- Start time MUST be stored as `HH:MM` (24h); invalid input is rejected rather than silently stored. Start time has no meaning without a start date but the two are not cross-validated against each other.
 - Task status changes MUST update the modified timestamp.
 - A due date in the past is valid and MUST be preserved as-is; the app never modifies or clears it automatically.
 

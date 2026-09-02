@@ -69,7 +69,7 @@ A user wants to move tasks from pending to in progress to completed so they can 
 
 ### Functional Requirements
 
-- **FR-001**: The system MUST allow users to create a task with a title, description, completion date, priority, and status.
+- **FR-001**: The system MUST allow users to create a task with a title, description, start date, completion date, priority, and status.
 - **FR-002**: The system MUST require a task title before a task can be saved.
 - **FR-003**: The system MUST allow users to view all existing tasks in a single list.
 - **FR-004**: The system MUST allow users to edit an existing task after it has been created.
@@ -83,7 +83,7 @@ A user wants to move tasks from pending to in progress to completed so they can 
 
 ### Key Entities *(include if feature involves data)*
 
-- **Task**: Represents a unit of work the user needs to complete. It includes a title, description, completion date, priority, and status.
+- **Task**: Represents a unit of work the user needs to complete. It includes a title, description, start date, completion date, priority, and status.
 - **User**: Represents the person managing daily activities and interacting with the task list.
 - **Task Filter**: Represents a view that narrows tasks according to selected priority, status, or date criteria.
 
