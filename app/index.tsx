@@ -129,27 +129,36 @@ export default function HomeScreen() {
     <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
       <View style={styles.header}>
         <Text style={styles.title}>{t('home.title')}</Text>
-        <Pressable onPress={() => router.push('/profile')}>
-          <Text style={styles.profileLink}>{t('home.profile')}</Text>
+        <Pressable
+          style={styles.profileButton}
+          onPress={() => router.push('/profile')}
+          accessibilityLabel={t('home.profile')}
+        >
+          <Text style={styles.profileButtonIcon}>👤</Text>
         </Pressable>
       </View>
 
-      <View style={styles.summaryBox}>
+      <View style={styles.summaryRow}>
         {TASK_STATUSES.map((status) => (
-          <View key={status} style={styles.summaryItem}>
-            <Text style={styles.summaryCount}>{statusCounts[status]}</Text>
+          <View key={status} style={styles.summaryCard}>
             <Text style={styles.summaryLabel}>{t(SUMMARY_LABEL_KEYS[status])}</Text>
+            <View style={styles.summaryValueBox}>
+              <Text style={styles.summaryCount}>{statusCounts[status]}</Text>
+            </View>
           </View>
         ))}
       </View>
 
+      <Text style={styles.sectionHeading}>{t('home.createTask')}</Text>
       <TaskForm value={form} onChange={setForm} onSubmit={handleCreate} submitLabel={t('home.addTask')} />
 
       <View style={styles.spacer} />
 
       <FilterBar filter={filter} onChange={setFilter} />
 
-      <View style={styles.spacer} />
+      <Text style={styles.listHeading}>
+        {t('home.filteredTasks').toUpperCase()} ({filteredTasks.length})
+      </Text>
 
       <TaskList
         tasks={filteredTasks}
@@ -171,18 +180,49 @@ function createStyles(colors: ThemeColors) {
       marginBottom: 16,
     },
     title: { fontSize: 28, fontWeight: '700', color: colors.text },
-    profileLink: { color: colors.primaryButtonBackground, fontWeight: '600', fontSize: 16 },
-    summaryBox: {
-      flexDirection: 'row',
+    profileButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: colors.card,
-      borderRadius: 12,
-      padding: 12,
-      marginBottom: 18,
-      justifyContent: 'space-around',
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    summaryItem: { alignItems: 'center' },
-    summaryCount: { fontSize: 20, fontWeight: '700', color: colors.text },
-    summaryLabel: { color: colors.mutedText },
+    profileButtonIcon: { fontSize: 18 },
+    summaryRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
+    summaryCard: {
+      flex: 1,
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      alignItems: 'center',
+      gap: 8,
+    },
+    summaryLabel: { color: colors.mutedText, fontSize: 12, fontWeight: '600', textAlign: 'center' },
+    summaryValueBox: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 10,
+      paddingVertical: 6,
+      paddingHorizontal: 16,
+      minWidth: 44,
+      alignItems: 'center',
+    },
+    summaryCount: { fontSize: 18, fontWeight: '700', color: colors.text },
+    sectionHeading: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 12 },
+    listHeading: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.mutedText,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginTop: 18,
+      marginBottom: 10,
+    },
     spacer: { height: 18 },
   });
 }

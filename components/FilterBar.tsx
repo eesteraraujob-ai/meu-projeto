@@ -106,18 +106,32 @@ function FilterChip({
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    box: { backgroundColor: colors.card, borderRadius: 12, padding: 12 },
-    sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8, color: colors.text },
-    label: { fontWeight: '600', marginBottom: 6, marginTop: 4, color: colors.text },
-    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
+    box: {
+      backgroundColor: colors.card,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      padding: 16,
+    },
+    sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 4, color: colors.text },
+    label: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.mutedText,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 8,
+      marginTop: 12,
+    },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     chip: {
-      paddingHorizontal: 10,
+      paddingHorizontal: 14,
       paddingVertical: 8,
       borderRadius: 999,
       backgroundColor: colors.chipBackground,
     },
     chipActive: { backgroundColor: colors.chipActiveBackground },
-    chipText: { color: colors.chipText },
+    chipText: { color: colors.chipText, fontWeight: '600' },
     chipTextActive: { color: colors.chipActiveText, fontWeight: '700' },
   });
 }

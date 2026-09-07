@@ -36,45 +36,59 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
 
   return (
     <View style={styles.box}>
+      <Text style={styles.fieldLabel}>{t('form.title')}</Text>
       <TextInput
         value={value.title}
         onChangeText={(text) => setField('title', text)}
-        placeholder={t('form.title')}
-        placeholderTextColor={colors.mutedText}
-        style={styles.input}
-      />
-      <TextInput
-        value={value.description}
-        onChangeText={(text) => setField('description', text)}
-        placeholder={t('form.description')}
-        placeholderTextColor={colors.mutedText}
-        style={[styles.input, styles.textArea]}
-        multiline
-      />
-      <TextInput
-        value={value.startDate}
-        onChangeText={(text) => setField('startDate', text)}
-        placeholder={t('form.startDate')}
-        placeholderTextColor={colors.mutedText}
-        style={styles.input}
-      />
-      <TextInput
-        value={value.startTime}
-        onChangeText={(text) => setField('startTime', text)}
-        placeholder={t('form.startTime')}
-        placeholderTextColor={colors.mutedText}
-        style={styles.input}
-        keyboardType="numbers-and-punctuation"
-      />
-      <TextInput
-        value={value.dueDate}
-        onChangeText={(text) => setField('dueDate', text)}
-        placeholder={t('form.dueDate')}
+        placeholder={t('form.titlePlaceholder')}
         placeholderTextColor={colors.mutedText}
         style={styles.input}
       />
 
-      <Text style={styles.label}>{t('form.priority')}</Text>
+      <Text style={styles.fieldLabel}>{t('form.description')}</Text>
+      <TextInput
+        value={value.description}
+        onChangeText={(text) => setField('description', text)}
+        placeholder={t('form.descriptionPlaceholder')}
+        placeholderTextColor={colors.mutedText}
+        style={[styles.input, styles.textArea]}
+        multiline
+      />
+
+      <View style={styles.row}>
+        <View style={styles.rowField}>
+          <Text style={styles.fieldLabel}>{t('form.startDateLabel')}</Text>
+          <TextInput
+            value={value.startDate}
+            onChangeText={(text) => setField('startDate', text)}
+            placeholder={t('form.startDatePlaceholder')}
+            placeholderTextColor={colors.mutedText}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.rowField}>
+          <Text style={styles.fieldLabel}>{t('form.startTimeLabel')}</Text>
+          <TextInput
+            value={value.startTime}
+            onChangeText={(text) => setField('startTime', text)}
+            placeholder={t('form.startTimePlaceholder')}
+            placeholderTextColor={colors.mutedText}
+            style={styles.input}
+            keyboardType="numbers-and-punctuation"
+          />
+        </View>
+      </View>
+
+      <Text style={styles.fieldLabel}>{t('form.dueDateLabel')}</Text>
+      <TextInput
+        value={value.dueDate}
+        onChangeText={(text) => setField('dueDate', text)}
+        placeholder={t('form.dueDatePlaceholder')}
+        placeholderTextColor={colors.mutedText}
+        style={styles.input}
+      />
+
+      <Text style={styles.fieldLabel}>{t('form.priority')}</Text>
       <View style={styles.chipRow}>
         {TASK_PRIORITIES.map((priority) => (
           <Pressable
@@ -89,7 +103,7 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
         ))}
       </View>
 
-      <Text style={styles.label}>{t('form.status')}</Text>
+      <Text style={styles.fieldLabel}>{t('form.status')}</Text>
       <View style={styles.chipRow}>
         {TASK_STATUSES.map((status) => (
           <Pressable
@@ -113,33 +127,42 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    box: { backgroundColor: colors.card, borderRadius: 12, padding: 12 },
+    box: {
+      backgroundColor: colors.card,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      padding: 16,
+    },
+    fieldLabel: { fontSize: 13, fontWeight: '600', color: colors.text, marginBottom: 6 },
     input: {
       backgroundColor: colors.inputBackground,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      marginBottom: 12,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      marginBottom: 14,
       color: colors.text,
     },
     textArea: { minHeight: 80, textAlignVertical: 'top' },
-    label: { fontWeight: '600', marginBottom: 8, color: colors.text },
-    chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
+    row: { flexDirection: 'row', gap: 12 },
+    rowField: { flex: 1 },
+    chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
     chip: {
-      paddingHorizontal: 12,
+      paddingHorizontal: 14,
       paddingVertical: 8,
       borderRadius: 999,
       backgroundColor: colors.chipBackground,
     },
     chipActive: { backgroundColor: colors.chipActiveBackground },
-    chipText: { color: colors.chipText },
+    chipText: { color: colors.chipText, fontWeight: '600' },
     chipTextActive: { color: colors.chipActiveText, fontWeight: '700' },
     primaryButton: {
       backgroundColor: colors.primaryButtonBackground,
-      borderRadius: 8,
-      paddingVertical: 12,
+      borderRadius: 14,
+      paddingVertical: 16,
       alignItems: 'center',
+      marginTop: 4,
     },
-    primaryButtonText: { color: colors.primaryButtonText, fontWeight: '700' },
+    primaryButtonText: { color: colors.primaryButtonText, fontWeight: '700', fontSize: 16 },
   });
 }
