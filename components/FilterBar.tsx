@@ -1,8 +1,12 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { PRIORITY_LABELS, TASK_PRIORITIES } from '../constants/priorities';
-import { STATUS_LABELS, TASK_STATUSES } from '../constants/statuses';
+import { TASK_PRIORITIES } from '../constants/priorities';
+import { TASK_STATUSES } from '../constants/statuses';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { DueDateScope } from '../lib/date';
+import { TranslationKey } from '../lib/i18n';
+import { ThemeColors } from '../lib/theme';
 import { TaskPriority, TaskStatus } from '../types/task';
 
 export interface TaskFilterValue {
@@ -11,15 +15,7 @@ export interface TaskFilterValue {
   dueDateScope: DueDateScope;
 }
 
-const DATE_SCOPE_LABELS: Record<DueDateScope, string> = {
-  all: 'Todas',
-  today: 'Hoje',
-  this_week: 'Esta semana',
-  overdue: 'Atrasadas',
-  none: 'Sem data',
-};
-
-const DATE_SCOPES = Object.keys(DATE_SCOPE_LABELS) as DueDateScope[];
+const DATE_SCOPES: DueDateScope[] = ['all', 'today', 'this_week', 'overdue', 'none'];
 
 interface FilterBarProps {
   filter: TaskFilterValue;
@@ -27,48 +23,61 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ filter, onChange }: FilterBarProps) {
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.box}>
-      <Text style={styles.sectionTitle}>Filtros</Text>
+      <Text style={styles.sectionTitle}>{t('filter.title')}</Text>
 
-      <Text style={styles.label}>Status</Text>
+      <Text style={styles.label}>{t('filter.status')}</Text>
       <View style={styles.row}>
-        <FilterChip label="Todos" active={filter.status === 'all'} onPress={() => onChange({ ...filter, status: 'all' })} />
+        <FilterChip
+          label={t('filter.all')}
+          active={filter.status === 'all'}
+          onPress={() => onChange({ ...filter, status: 'all' })}
+          colors={colors}
+        />
         {TASK_STATUSES.map((status) => (
           <FilterChip
             key={status}
-            label={STATUS_LABELS[status]}
+            label={t(`status.${status}` as TranslationKey)}
             active={filter.status === status}
             onPress={() => onChange({ ...filter, status })}
+            colors={colors}
           />
         ))}
       </View>
 
-      <Text style={styles.label}>Prioridade</Text>
+      <Text style={styles.label}>{t('filter.priority')}</Text>
       <View style={styles.row}>
         <FilterChip
-          label="Todas"
+          label={t('filter.all')}
           active={filter.priority === 'all'}
           onPress={() => onChange({ ...filter, priority: 'all' })}
+          colors={colors}
         />
         {TASK_PRIORITIES.map((priority) => (
           <FilterChip
             key={priority}
-            label={PRIORITY_LABELS[priority]}
+            label={t(`priority.${priority}` as TranslationKey)}
             active={filter.priority === priority}
             onPress={() => onChange({ ...filter, priority })}
+            colors={colors}
           />
         ))}
       </View>
 
-      <Text style={styles.label}>Data</Text>
+      <Text style={styles.label}>{t('filter.date')}</Text>
       <View style={styles.row}>
         {DATE_SCOPES.map((scope) => (
           <FilterChip
             key={scope}
-            label={DATE_SCOPE_LABELS[scope]}
+            label={t(`filter.dateScope.${scope}` as TranslationKey)}
             active={filter.dueDateScope === scope}
             onPress={() => onChange({ ...filter, dueDateScope: scope })}
+            colors={colors}
           />
         ))}
       </View>
@@ -76,7 +85,18 @@ export default function FilterBar({ filter, onChange }: FilterBarProps) {
   );
 }
 
-function FilterChip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+function FilterChip({
+  label,
+  active,
+  onPress,
+  colors,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  colors: ThemeColors;
+}) {
+  const styles = createStyles(colors);
   return (
     <Pressable style={[styles.chip, active && styles.chipActive]} onPress={onPress}>
       <Text style={active ? styles.chipTextActive : styles.chipText}>{label}</Text>
@@ -84,18 +104,20 @@ function FilterChip({ label, active, onPress }: { label: string; active: boolean
   );
 }
 
-const styles = StyleSheet.create({
-  box: { backgroundColor: '#fff', borderRadius: 12, padding: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8 },
-  label: { fontWeight: '600', marginBottom: 6, marginTop: 4 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#e2e8f0',
-  },
-  chipActive: { backgroundColor: '#2563eb' },
-  chipText: { color: '#0f172a' },
-  chipTextActive: { color: '#fff', fontWeight: '700' },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    box: { backgroundColor: colors.card, borderRadius: 12, padding: 12 },
+    sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8, color: colors.text },
+    label: { fontWeight: '600', marginBottom: 6, marginTop: 4, color: colors.text },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
+    chip: {
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: colors.chipBackground,
+    },
+    chipActive: { backgroundColor: colors.chipActiveBackground },
+    chipText: { color: colors.chipText },
+    chipTextActive: { color: colors.chipActiveText, fontWeight: '700' },
+  });
+}

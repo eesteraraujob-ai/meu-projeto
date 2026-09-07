@@ -19,6 +19,15 @@ This contract defines the local SQLite structure used by the task manager for pe
 | created_at | TEXT | Yes | Creation timestamp |
 | updated_at | TEXT | Yes | Last change timestamp |
 
+## Table: app_settings
+
+| Column | Type | Required | Description |
+|--------|------|----------|-------------|
+| key | TEXT | Yes | Setting name, e.g. `theme`, `language` (primary key) |
+| value | TEXT | Yes | Setting value, e.g. `light`/`dark`, `pt`/`en` |
+
+A generic key/value store rather than fixed columns, since the set of app preferences is small and may grow without warranting a schema change each time. Reads default to the app's built-in default (`light` theme, `pt` language) when a key is absent; writes upsert (`INSERT ... ON CONFLICT DO UPDATE`).
+
 ## Data behaviors
 
 - The title field MUST be non-empty when creating or updating a task.

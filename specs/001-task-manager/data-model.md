@@ -25,6 +25,15 @@
 
 Active filters combine with AND: a task must match every non-`all` filter to appear in the list.
 
+## Entity: AppSettings
+
+| Field | Type | Constraints | Notes |
+|-------|------|-------------|-------|
+| theme | string | Required, one of: `light`, `dark` | Applied across the whole app; defaults to `light` |
+| language | string | Required, one of: `pt`, `en` | Applied across the whole app; defaults to `pt` |
+
+Stored as free-form key/value pairs (see [contracts/task-db.md](contracts/task-db.md#table-app_settings)), not a fixed-column table, since this is a small, open-ended preferences set.
+
 ## Relationships
 
 - A user manages many tasks.

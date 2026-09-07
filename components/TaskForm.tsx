@@ -1,7 +1,11 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { PRIORITY_LABELS, TASK_PRIORITIES } from '../constants/priorities';
-import { STATUS_LABELS, TASK_STATUSES } from '../constants/statuses';
+import { TASK_PRIORITIES } from '../constants/priorities';
+import { TASK_STATUSES } from '../constants/statuses';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { ThemeColors } from '../lib/theme';
+import { TranslationKey } from '../lib/i18n';
 import { TaskPriority, TaskStatus } from '../types/task';
 
 export interface TaskFormValue {
@@ -22,6 +26,10 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ value, onChange, onSubmit, submitLabel }: TaskFormProps) {
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const styles = createStyles(colors);
+
   const setField = <K extends keyof TaskFormValue>(field: K, fieldValue: TaskFormValue[K]) => {
     onChange({ ...value, [field]: fieldValue });
   };
@@ -31,37 +39,42 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
       <TextInput
         value={value.title}
         onChangeText={(text) => setField('title', text)}
-        placeholder="Título"
+        placeholder={t('form.title')}
+        placeholderTextColor={colors.mutedText}
         style={styles.input}
       />
       <TextInput
         value={value.description}
         onChangeText={(text) => setField('description', text)}
-        placeholder="Descrição"
+        placeholder={t('form.description')}
+        placeholderTextColor={colors.mutedText}
         style={[styles.input, styles.textArea]}
         multiline
       />
       <TextInput
         value={value.startDate}
         onChangeText={(text) => setField('startDate', text)}
-        placeholder="Data de início (DD/MM/AAAA ou AAAA-MM-DD)"
+        placeholder={t('form.startDate')}
+        placeholderTextColor={colors.mutedText}
         style={styles.input}
       />
       <TextInput
         value={value.startTime}
         onChangeText={(text) => setField('startTime', text)}
-        placeholder="Hora de início (HH:MM)"
+        placeholder={t('form.startTime')}
+        placeholderTextColor={colors.mutedText}
         style={styles.input}
         keyboardType="numbers-and-punctuation"
       />
       <TextInput
         value={value.dueDate}
         onChangeText={(text) => setField('dueDate', text)}
-        placeholder="Data de conclusão (DD/MM/AAAA ou AAAA-MM-DD)"
+        placeholder={t('form.dueDate')}
+        placeholderTextColor={colors.mutedText}
         style={styles.input}
       />
 
-      <Text style={styles.label}>Prioridade</Text>
+      <Text style={styles.label}>{t('form.priority')}</Text>
       <View style={styles.chipRow}>
         {TASK_PRIORITIES.map((priority) => (
           <Pressable
@@ -70,13 +83,13 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
             onPress={() => setField('priority', priority)}
           >
             <Text style={value.priority === priority ? styles.chipTextActive : styles.chipText}>
-              {PRIORITY_LABELS[priority]}
+              {t(`priority.${priority}` as TranslationKey)}
             </Text>
           </Pressable>
         ))}
       </View>
 
-      <Text style={styles.label}>Status</Text>
+      <Text style={styles.label}>{t('form.status')}</Text>
       <View style={styles.chipRow}>
         {TASK_STATUSES.map((status) => (
           <Pressable
@@ -85,7 +98,7 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
             onPress={() => setField('status', status)}
           >
             <Text style={value.status === status ? styles.chipTextActive : styles.chipText}>
-              {STATUS_LABELS[status]}
+              {t(`status.${status}` as TranslationKey)}
             </Text>
           </Pressable>
         ))}
@@ -98,32 +111,35 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
   );
 }
 
-const styles = StyleSheet.create({
-  box: { backgroundColor: '#fff', borderRadius: 12, padding: 12 },
-  input: {
-    backgroundColor: '#f1f5f9',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 12,
-  },
-  textArea: { minHeight: 80, textAlignVertical: 'top' },
-  label: { fontWeight: '600', marginBottom: 8 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#e2e8f0',
-  },
-  chipActive: { backgroundColor: '#2563eb' },
-  chipText: { color: '#0f172a' },
-  chipTextActive: { color: '#fff', fontWeight: '700' },
-  primaryButton: {
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  primaryButtonText: { color: '#fff', fontWeight: '700' },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    box: { backgroundColor: colors.card, borderRadius: 12, padding: 12 },
+    input: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      marginBottom: 12,
+      color: colors.text,
+    },
+    textArea: { minHeight: 80, textAlignVertical: 'top' },
+    label: { fontWeight: '600', marginBottom: 8, color: colors.text },
+    chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
+    chip: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: colors.chipBackground,
+    },
+    chipActive: { backgroundColor: colors.chipActiveBackground },
+    chipText: { color: colors.chipText },
+    chipTextActive: { color: colors.chipActiveText, fontWeight: '700' },
+    primaryButton: {
+      backgroundColor: colors.primaryButtonBackground,
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    primaryButtonText: { color: colors.primaryButtonText, fontWeight: '700' },
+  });
+}

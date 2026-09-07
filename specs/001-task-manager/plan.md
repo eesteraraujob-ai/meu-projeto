@@ -61,6 +61,7 @@ specs/001-task-manager/
 app/
 ├── _layout.tsx
 ├── index.tsx
+├── profile.tsx
 ├── task/[id].tsx
 components/
 ├── TaskForm.tsx
@@ -70,16 +71,24 @@ components/
 constants/
 ├── priorities.ts
 ├── statuses.ts
+contexts/
+├── ThemeContext.tsx
+├── LanguageContext.tsx
 db/
 ├── index.ts
 ├── tasks.ts
+├── settings.ts
 lib/
 ├── date.ts
+├── theme.ts
+├── i18n.ts
 types/
 ├── task.ts
 ```
 
-**Structure Decision**: A minimal single-app Expo structure with local SQLite database access and lightweight UI components is sufficient for the feature and aligns with the constitution's simplicity requirement. No settings screen, custom hooks, or separate formatting module are introduced — none is required by any user story, and adding them would be speculative complexity. Filter state and list filtering are plain component state plus a memoized derivation, not a dedicated hook; date formatting stays in `lib/date.ts` alongside date parsing since the two are small enough not to warrant separate files. Presentational concerns (form, list, card, filter bar) are split out of the screen files into `components/` because a single screen mixing form, filters, list, and inline styles stops being readable as those pieces grow — each extracted component still does one job, matching Principle II.
+**Structure Decision**: A minimal single-app Expo structure with local SQLite database access and lightweight UI components is sufficient for the feature and aligns with the constitution's simplicity requirement. Filter state and list filtering are plain component state plus a memoized derivation, not a dedicated hook; date formatting stays in `lib/date.ts` alongside date parsing since the two are small enough not to warrant separate files. Presentational concerns (form, list, card, filter bar) are split out of the screen files into `components/` because a single screen mixing form, filters, list, and inline styles stops being readable as those pieces grow — each extracted component still does one job, matching Principle II.
+
+Theme and language state live in `contexts/` (React Context) because both are cross-cutting concerns read by nearly every screen and component — prop-drilling them would be more speculative complexity than a small context, not less. Their persistence reuses the existing SQLite database (`db/settings.ts`, a generic key/value table) instead of adding a new storage dependency like AsyncStorage, per the constitution's preference against unnecessary new dependencies. Labels/strings move out of `constants/` and into `lib/i18n.ts` once they need to vary by language; `constants/priorities.ts` and `constants/statuses.ts` now hold only the enum value lists.
 
 ## Complexity Tracking
 

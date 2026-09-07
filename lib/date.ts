@@ -24,8 +24,8 @@ export function normalizeDateInput(value: string): string | null {
   return date.toISOString().slice(0, 10);
 }
 
-export function formatDateLabel(value: string | null): string {
-  if (!value) return 'Sem data';
+export function formatDateLabel(value: string | null, emptyLabel = 'Sem data'): string {
+  if (!value) return emptyLabel;
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return value;
   const [, year, month, day] = match;
@@ -46,8 +46,8 @@ export function normalizeTimeInput(value: string): string | null {
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
-export function formatTimeLabel(value: string | null): string {
-  return value ?? 'Sem hora';
+export function formatTimeLabel(value: string | null, emptyLabel = 'Sem hora'): string {
+  return value ?? emptyLabel;
 }
 
 export type DueDateScope = 'all' | 'today' | 'this_week' | 'overdue' | 'none';

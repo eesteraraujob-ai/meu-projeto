@@ -18,6 +18,13 @@ export function initializeDb() {
     );
   `);
 
+  db.execSync(`
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL
+    );
+  `);
+
   const columns = db.getAllSync<{ name: string }>('PRAGMA table_info(tasks)');
   const columnNames = new Set(columns.map((column) => column.name));
   for (const column of ['start_date', 'start_time']) {

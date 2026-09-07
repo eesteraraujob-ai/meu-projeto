@@ -116,6 +116,22 @@
 
 ---
 
+## Phase 8: User Story 4 - View task summary and app settings (Priority: P4)
+
+**Goal**: Give the user a profile screen with task counts and the ability to switch theme and language for the whole app.
+
+**Independent Test**: Open the profile screen, confirm the counts match the task list, switch theme and language, and confirm the whole app updates and the choice survives a restart.
+
+- [x] T030 [P] [US4] Add app_settings key/value table and db/settings.ts (getSetting/setSetting) for persisting preferences (FR-013, FR-014)
+- [x] T031 [P] [US4] Add lib/theme.ts (light/dark color tokens) and contexts/ThemeContext.tsx (ThemeProvider/useTheme), wired into app/_layout.tsx and the native StatusBar style
+- [x] T032 [P] [US4] Add lib/i18n.ts (pt/en translation dictionaries) and contexts/LanguageContext.tsx (LanguageProvider/useLanguage), wired into app/_layout.tsx; move all UI strings and STATUS_LABELS/PRIORITY_LABELS out of components and constants into translations
+- [x] T033 [US4] Migrate app/index.tsx, app/task/[id].tsx, and all components/ to consume theme colors and translated strings instead of hardcoded values
+- [x] T034 [US4] Create app/profile.tsx with task counts (total, completed, pending), theme switcher, language switcher, and an about section (app name, version, description); add navigation entry point from app/index.tsx (FR-012, FR-015)
+
+**Checkpoint**: All four user stories independently functional; re-run T024's quickstart validation to cover this phase too
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

@@ -3,8 +3,11 @@ import { Alert, ScrollView, StyleSheet, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import TaskForm, { TaskFormValue } from '../../components/TaskForm';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { getTaskById, updateTask } from '../../db/tasks';
 import { normalizeDateInput, normalizeTimeInput } from '../../lib/date';
+import { ThemeColors } from '../../lib/theme';
 
 const emptyForm: TaskFormValue = {
   title: '',
@@ -19,6 +22,9 @@ const emptyForm: TaskFormValue = {
 export default function TaskDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const styles = createStyles(colors);
   const { id } = useLocalSearchParams<{ id: string }>();
   const [form, setForm] = useState<TaskFormValue>(emptyForm);
 
@@ -39,25 +45,25 @@ export default function TaskDetailScreen() {
 
   const handleSave = () => {
     if (!id || !form.title.trim()) {
-      Alert.alert('Título obrigatório', 'O título da tarefa não pode ficar vazio.');
+      Alert.alert(t('alert.requiredTitleTitle'), t('alert.requiredTitleMessageEdit'));
       return;
     }
 
     const startDate = normalizeDateInput(form.startDate);
     if (form.startDate.trim() && !startDate) {
-      Alert.alert('Data inválida', 'Informe a data de início no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      Alert.alert(t('alert.invalidDateTitle'), t('alert.invalidStartDateMessage'));
       return;
     }
 
     const startTime = normalizeTimeInput(form.startTime);
     if (form.startTime.trim() && !startTime) {
-      Alert.alert('Hora inválida', 'Informe a hora de início no formato HH:MM.');
+      Alert.alert(t('alert.invalidTimeTitle'), t('alert.invalidTimeMessage'));
       return;
     }
 
     const dueDate = normalizeDateInput(form.dueDate);
     if (form.dueDate.trim() && !dueDate) {
-      Alert.alert('Data inválida', 'Informe a data de conclusão no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      Alert.alert(t('alert.invalidDateTitle'), t('alert.invalidDueDateMessage'));
       return;
     }
 
@@ -76,13 +82,15 @@ export default function TaskDetailScreen() {
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
-      <Text style={styles.title}>Editar tarefa</Text>
-      <TaskForm value={form} onChange={setForm} onSubmit={handleSave} submitLabel="Salvar" />
+      <Text style={styles.title}>{t('taskDetail.title')}</Text>
+      <TaskForm value={form} onChange={setForm} onSubmit={handleSave} submitLabel={t('taskDetail.save')} />
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 16 },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, padding: 16, backgroundColor: colors.background },
+    title: { fontSize: 24, fontWeight: '700', marginBottom: 16, color: colors.text },
+  });
+}

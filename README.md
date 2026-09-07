@@ -1,6 +1,6 @@
 # Task Manager
 
-Gerenciador de tarefas pessoal para acompanhar atividades do dia a dia. Cada tarefa tem título, descrição, data de conclusão, prioridade e status (pendente, em andamento, concluída), com filtros para focar no que importa.
+Gerenciador de tarefas pessoal para acompanhar atividades do dia a dia. Cada tarefa tem título, descrição, data/hora de início, data de conclusão, prioridade e status (pendente, em andamento, concluída), com filtros para focar no que importa. Uma tela de perfil mostra o resumo das tarefas e permite trocar tema (claro/escuro) e idioma (Português/English).
 
 Aplicativo local-first: os dados ficam em um banco SQLite no próprio dispositivo, sem servidor, sem conta e sem sincronização.
 
@@ -38,14 +38,22 @@ Não há suíte de testes automatizados — a validação é manual, por decisã
 
 ```text
 app/                    telas (Expo Router)
-├── _layout.tsx         Stack raiz e estilo do header
+├── _layout.tsx         Stack raiz, providers de tema/idioma e StatusBar
 ├── index.tsx           lista, formulário de criação e filtros
+├── profile.tsx         resumo de tarefas, tema, idioma e sobre o app
 └── task/[id].tsx       edição de uma tarefa
-constants/              enums de prioridade e status
+constants/              enums de prioridade e status (sem rótulos — ver lib/i18n.ts)
+contexts/
+├── ThemeContext.tsx    ThemeProvider/useTheme (tema claro/escuro)
+└── LanguageContext.tsx LanguageProvider/useLanguage (pt/en)
 db/
 ├── index.ts            abertura do banco e criação do schema
-└── tasks.ts            repositório de tarefas (CRUD)
-lib/date.ts             normalização e formatação de datas
+├── tasks.ts            repositório de tarefas (CRUD)
+└── settings.ts         chave/valor para preferências (tema, idioma)
+lib/
+├── date.ts             normalização e formatação de datas/horas
+├── theme.ts            paletas de cores claro/escuro
+└── i18n.ts             dicionário de textos pt/en
 types/task.ts           tipos Task, TaskInput, TaskStatus, TaskPriority
 specs/001-task-manager/ spec, plano, modelo de dados, contrato e tarefas
 ```
@@ -70,6 +78,8 @@ Tabela única `tasks`, criada automaticamente na primeira execução por `initia
 | `updated_at` | TEXT | sim | timestamp ISO |
 
 A listagem ordena por status (pendente → em andamento → concluída), depois por data de conclusão mais próxima e por última modificação.
+
+Há também uma tabela `app_settings` (chave/valor) para as preferências de tema e idioma — ver [db/settings.ts](db/settings.ts).
 
 Contrato completo em [contracts/task-db.md](specs/001-task-manager/contracts/task-db.md); modelo e regras de validação em [data-model.md](specs/001-task-manager/data-model.md).
 

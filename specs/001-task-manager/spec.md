@@ -58,6 +58,23 @@ A user wants to move tasks from pending to in progress to completed so they can 
 
 ---
 
+### User Story 4 - View task summary and app settings (Priority: P4)
+
+A user wants a single place to see how many tasks they have overall, completed, and still pending, and to adjust the app's theme and language.
+
+**Why this priority**: A summary view builds confidence in the app's state at a glance, and personal preferences (theme, language) improve daily comfort without being core to task tracking.
+
+**Independent Test**: A user opens the profile screen and sees accurate task counts, then changes the theme and language and sees the whole app reflect the new choice immediately.
+
+**Acceptance Scenarios**:
+
+1. **Given** the user has tasks in different states, **When** they open the profile screen, **Then** they see the total number of tasks, how many are completed, and how many are still pending (not yet completed).
+2. **Given** the user is on the profile screen, **When** they choose a different theme (light or dark), **Then** the whole app immediately switches to that theme and the choice persists across app restarts.
+3. **Given** the user is on the profile screen, **When** they choose a different language, **Then** all app text switches to that language and the choice persists across app restarts.
+4. **Given** the user is on the profile screen, **When** they look at the about section, **Then** they see the app's name, version, and a short description.
+
+---
+
 ### Edge Cases
 
 - Saving a task without a title is blocked; the user sees a clear message and the task is not created or updated (see FR-002).
@@ -80,12 +97,17 @@ A user wants to move tasks from pending to in progress to completed so they can 
 - **FR-009**: The system MUST keep task information updated after any create, edit, delete, or status change, including immediately reflecting edits made from a task's own detail screen back on the main list.
 - **FR-010**: The system MUST support review of tasks that are pending, in progress, or completed without losing task details.
 - **FR-011**: The system MUST allow users to permanently delete a task they no longer need.
+- **FR-012**: The system MUST provide a profile screen showing the total number of tasks, the number completed, and the number still pending (not yet completed).
+- **FR-013**: The system MUST let users switch between a light and a dark theme from the profile screen, applying the choice across the whole app and persisting it across restarts.
+- **FR-014**: The system MUST let users switch the app's display language from the profile screen, applying the choice across the whole app and persisting it across restarts.
+- **FR-015**: The system MUST show the app's name, version, and a short description on the profile screen.
 
 ### Key Entities *(include if feature involves data)*
 
 - **Task**: Represents a unit of work the user needs to complete. It includes a title, description, start date, completion date, priority, and status.
 - **User**: Represents the person managing daily activities and interacting with the task list.
 - **Task Filter**: Represents a view that narrows tasks according to selected priority, status, or date criteria.
+- **App Settings**: Represents the user's persisted preferences (theme, language) applied across the whole app.
 
 ## Success Criteria *(mandatory)*
 

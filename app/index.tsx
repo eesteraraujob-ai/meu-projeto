@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { router, useFocusEffect } from 'expo-router';
 import TaskForm, { TaskFormValue } from '../components/TaskForm';
 import FilterBar, { TaskFilterValue } from '../components/FilterBar';
 import TaskList from '../components/TaskList';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { createTask, deleteTask, getAllTasks, updateTask } from '../db/tasks';
 import { matchesDueDateScope, normalizeDateInput, normalizeTimeInput } from '../lib/date';
-import { STATUS_LABELS, TASK_STATUSES } from '../constants/statuses';
+import { ThemeColors } from '../lib/theme';
+import { TASK_STATUSES } from '../constants/statuses';
 import { Task, TaskStatus } from '../types/task';
 
 const defaultForm: TaskFormValue = {
@@ -27,8 +29,17 @@ const defaultFilter: TaskFilterValue = {
   dueDateScope: 'all',
 };
 
+const SUMMARY_LABEL_KEYS: Record<TaskStatus, 'home.summary.pending' | 'home.summary.inProgress' | 'home.summary.completed'> = {
+  pending: 'home.summary.pending',
+  in_progress: 'home.summary.inProgress',
+  completed: 'home.summary.completed',
+};
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const { t } = useLanguage();
+  const styles = createStyles(colors);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [form, setForm] = useState<TaskFormValue>(defaultForm);
   const [filter, setFilter] = useState<TaskFilterValue>(defaultFilter);
@@ -64,25 +75,25 @@ export default function HomeScreen() {
 
   const handleCreate = () => {
     if (!form.title.trim()) {
-      Alert.alert('Título obrigatório', 'Informe um título para salvar a tarefa.');
+      Alert.alert(t('alert.requiredTitleTitle'), t('alert.requiredTitleMessageCreate'));
       return;
     }
 
     const startDate = normalizeDateInput(form.startDate);
     if (form.startDate.trim() && !startDate) {
-      Alert.alert('Data inválida', 'Informe a data de início no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      Alert.alert(t('alert.invalidDateTitle'), t('alert.invalidStartDateMessage'));
       return;
     }
 
     const startTime = normalizeTimeInput(form.startTime);
     if (form.startTime.trim() && !startTime) {
-      Alert.alert('Hora inválida', 'Informe a hora de início no formato HH:MM.');
+      Alert.alert(t('alert.invalidTimeTitle'), t('alert.invalidTimeMessage'));
       return;
     }
 
     const dueDate = normalizeDateInput(form.dueDate);
     if (form.dueDate.trim() && !dueDate) {
-      Alert.alert('Data inválida', 'Informe a data de conclusão no formato DD/MM/AAAA ou AAAA-MM-DD.');
+      Alert.alert(t('alert.invalidDateTitle'), t('alert.invalidDueDateMessage'));
       return;
     }
 
@@ -116,18 +127,23 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
-      <Text style={styles.title}>Minhas tarefas</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>{t('home.title')}</Text>
+        <Pressable onPress={() => router.push('/profile')}>
+          <Text style={styles.profileLink}>{t('home.profile')}</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.summaryBox}>
         {TASK_STATUSES.map((status) => (
           <View key={status} style={styles.summaryItem}>
             <Text style={styles.summaryCount}>{statusCounts[status]}</Text>
-            <Text style={styles.summaryLabel}>{STATUS_LABELS[status]}</Text>
+            <Text style={styles.summaryLabel}>{t(SUMMARY_LABEL_KEYS[status])}</Text>
           </View>
         ))}
       </View>
 
-      <TaskForm value={form} onChange={setForm} onSubmit={handleCreate} submitLabel="Adicionar tarefa" />
+      <TaskForm value={form} onChange={setForm} onSubmit={handleCreate} submitLabel={t('home.addTask')} />
 
       <View style={styles.spacer} />
 
@@ -145,19 +161,28 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  title: { fontSize: 28, fontWeight: '700', marginBottom: 16 },
-  summaryBox: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 18,
-    justifyContent: 'space-around',
-  },
-  summaryItem: { alignItems: 'center' },
-  summaryCount: { fontSize: 20, fontWeight: '700' },
-  summaryLabel: { color: '#64748b' },
-  spacer: { height: 18 },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, padding: 16, backgroundColor: colors.background },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    title: { fontSize: 28, fontWeight: '700', color: colors.text },
+    profileLink: { color: colors.primaryButtonBackground, fontWeight: '600', fontSize: 16 },
+    summaryBox: {
+      flexDirection: 'row',
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      padding: 12,
+      marginBottom: 18,
+      justifyContent: 'space-around',
+    },
+    summaryItem: { alignItems: 'center' },
+    summaryCount: { fontSize: 20, fontWeight: '700', color: colors.text },
+    summaryLabel: { color: colors.mutedText },
+    spacer: { height: 18 },
+  });
+}
