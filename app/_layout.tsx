@@ -5,13 +5,14 @@ import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
 
 function RootLayoutContent() {
-  const { theme } = useTheme();
+  const { theme, colors } = useTheme();
   return (
     <>
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       <Stack
         screenOptions={{
           headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
         }}
       />
     </>

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -36,6 +37,12 @@ function priorityDotColor(colors: ThemeColors, priority: TaskPriority) {
   if (priority === 'high') return colors.priorityHigh;
   if (priority === 'medium') return colors.priorityMedium;
   return colors.priorityLow;
+}
+
+function transitionIcon(status: TaskStatus): keyof typeof Ionicons.glyphMap {
+  if (status === 'in_progress') return 'play-outline';
+  if (status === 'completed') return 'checkmark-outline';
+  return 'refresh-outline';
 }
 
 interface TaskCardProps {
@@ -94,14 +101,17 @@ export default function TaskCard({ task, onStatusChange, onEdit, onDelete }: Tas
             style={styles.outlineButton}
             onPress={() => onStatusChange(task.id, transition.status)}
           >
+            <Ionicons name={transitionIcon(transition.status)} size={16} color={colors.outlineButtonText} />
             <Text style={styles.outlineButtonText}>{t(transition.labelKey)}</Text>
           </Pressable>
         ))}
         <View style={styles.actionsRow}>
           <Pressable style={[styles.outlineButton, styles.actionsRowButton]} onPress={() => onEdit(task.id)}>
+            <Ionicons name="pencil-outline" size={16} color={colors.outlineButtonText} />
             <Text style={styles.outlineButtonText}>{t('card.edit')}</Text>
           </Pressable>
           <Pressable style={[styles.dangerButton, styles.actionsRowButton]} onPress={() => onDelete(task.id)}>
+            <Ionicons name="trash-outline" size={16} color={colors.dangerText} />
             <Text style={styles.dangerButtonText}>{t('card.delete')}</Text>
           </Pressable>
         </View>
@@ -136,21 +146,27 @@ function createStyles(colors: ThemeColors) {
     actionsRow: { flexDirection: 'row', gap: 8 },
     actionsRowButton: { flex: 1 },
     outlineButton: {
+      flexDirection: 'row',
       backgroundColor: colors.outlineButtonBackground,
       borderWidth: 1,
       borderColor: colors.outlineButtonBorder,
       borderRadius: 10,
       paddingVertical: 10,
       alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
     },
     outlineButtonText: { color: colors.outlineButtonText, fontWeight: '600' },
     dangerButton: {
+      flexDirection: 'row',
       backgroundColor: colors.dangerBackground,
       borderWidth: 1,
       borderColor: colors.dangerBorder,
       borderRadius: 10,
       paddingVertical: 10,
       alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
     },
     dangerButtonText: { color: colors.dangerText, fontWeight: '600' },
   });

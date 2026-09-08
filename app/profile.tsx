@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,21 +34,13 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.back()}
-          accessibilityLabel={t('common.back')}
-        >
-          <Text style={styles.backButtonIcon}>‹</Text>
-        </Pressable>
-        <Text style={styles.title}>{t('profile.title')}</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+      <Pressable style={styles.backButton} onPress={() => router.back()} accessibilityLabel={t('common.back')}>
+        <Ionicons name="chevron-back" size={20} color={colors.text} />
+      </Pressable>
 
       <View style={styles.avatarWrapper}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarIcon}>👤</Text>
+          <Ionicons name="person" size={40} color={colors.mutedText} />
         </View>
       </View>
 
@@ -59,7 +52,10 @@ export default function ProfileScreen() {
 
       <View style={styles.listCard}>
         <View style={styles.listRow}>
-          <Text style={styles.listRowLabel}>{t('profile.themeSection')}</Text>
+          <View style={styles.listRowHeader}>
+            <Ionicons name="color-palette-outline" size={18} color={colors.text} />
+            <Text style={styles.listRowLabel}>{t('profile.themeSection')}</Text>
+          </View>
           <View style={styles.chipRow}>
             <ChoiceChip
               label={t('profile.light')}
@@ -79,7 +75,10 @@ export default function ProfileScreen() {
         <View style={styles.divider} />
 
         <View style={styles.listRow}>
-          <Text style={styles.listRowLabel}>{t('profile.languageSection')}</Text>
+          <View style={styles.listRowHeader}>
+            <Ionicons name="globe-outline" size={18} color={colors.text} />
+            <Text style={styles.listRowLabel}>{t('profile.languageSection')}</Text>
+          </View>
           <View style={styles.chipRow}>
             <ChoiceChip
               label={t('profile.portuguese')}
@@ -99,7 +98,10 @@ export default function ProfileScreen() {
         <View style={styles.divider} />
 
         <View style={styles.listRow}>
-          <Text style={styles.listRowLabel}>{t('profile.aboutSection')}</Text>
+          <View style={styles.listRowHeader}>
+            <Ionicons name="information-circle-outline" size={18} color={colors.text} />
+            <Text style={styles.listRowLabel}>{t('profile.aboutSection')}</Text>
+          </View>
           <Text style={styles.aboutName}>{Constants.expoConfig?.name ?? 'Task Manager'}</Text>
           <Text style={styles.aboutVersion}>
             {t('profile.version')} {Constants.expoConfig?.version ?? '1.0.0'}
@@ -145,12 +147,6 @@ function ChoiceChip({
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, padding: 16, backgroundColor: colors.background },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 20,
-    },
     backButton: {
       width: 36,
       height: 36,
@@ -160,11 +156,9 @@ function createStyles(colors: ThemeColors) {
       borderColor: colors.cardBorder,
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: 16,
     },
-    backButtonIcon: { fontSize: 20, color: colors.text, marginTop: -2 },
-    headerSpacer: { width: 36 },
-    title: { fontSize: 18, fontWeight: '700', color: colors.text },
-    avatarWrapper: { alignItems: 'center', marginBottom: 20 },
+    avatarWrapper: { alignItems: 'center', marginBottom: 32 },
     avatar: {
       width: 84,
       height: 84,
@@ -173,7 +167,6 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    avatarIcon: { fontSize: 36 },
     statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
     statCard: {
       flex: 1,
@@ -204,6 +197,7 @@ function createStyles(colors: ThemeColors) {
       padding: 16,
     },
     listRow: { paddingVertical: 12, gap: 10 },
+    listRowHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     listRowLabel: { fontSize: 15, fontWeight: '700', color: colors.text },
     divider: { height: 1, backgroundColor: colors.divider },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

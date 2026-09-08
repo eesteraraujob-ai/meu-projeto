@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TASK_PRIORITIES } from '../constants/priorities';
@@ -58,35 +59,44 @@ export default function TaskForm({ value, onChange, onSubmit, submitLabel }: Tas
       <View style={styles.row}>
         <View style={styles.rowField}>
           <Text style={styles.fieldLabel}>{t('form.startDateLabel')}</Text>
-          <TextInput
-            value={value.startDate}
-            onChangeText={(text) => setField('startDate', text)}
-            placeholder={t('form.startDatePlaceholder')}
-            placeholderTextColor={colors.mutedText}
-            style={styles.input}
-          />
+          <View style={styles.inputIconWrapper}>
+            <TextInput
+              value={value.startDate}
+              onChangeText={(text) => setField('startDate', text)}
+              placeholder={t('form.startDatePlaceholder')}
+              placeholderTextColor={colors.mutedText}
+              style={[styles.input, styles.inputWithIcon]}
+            />
+            <Ionicons name="calendar-outline" size={18} color={colors.mutedText} style={styles.inputIcon} />
+          </View>
         </View>
         <View style={styles.rowField}>
           <Text style={styles.fieldLabel}>{t('form.startTimeLabel')}</Text>
-          <TextInput
-            value={value.startTime}
-            onChangeText={(text) => setField('startTime', text)}
-            placeholder={t('form.startTimePlaceholder')}
-            placeholderTextColor={colors.mutedText}
-            style={styles.input}
-            keyboardType="numbers-and-punctuation"
-          />
+          <View style={styles.inputIconWrapper}>
+            <TextInput
+              value={value.startTime}
+              onChangeText={(text) => setField('startTime', text)}
+              placeholder={t('form.startTimePlaceholder')}
+              placeholderTextColor={colors.mutedText}
+              style={[styles.input, styles.inputWithIcon]}
+              keyboardType="numbers-and-punctuation"
+            />
+            <Ionicons name="time-outline" size={18} color={colors.mutedText} style={styles.inputIcon} />
+          </View>
         </View>
       </View>
 
       <Text style={styles.fieldLabel}>{t('form.dueDateLabel')}</Text>
-      <TextInput
-        value={value.dueDate}
-        onChangeText={(text) => setField('dueDate', text)}
-        placeholder={t('form.dueDatePlaceholder')}
-        placeholderTextColor={colors.mutedText}
-        style={styles.input}
-      />
+      <View style={styles.inputIconWrapper}>
+        <TextInput
+          value={value.dueDate}
+          onChangeText={(text) => setField('dueDate', text)}
+          placeholder={t('form.dueDatePlaceholder')}
+          placeholderTextColor={colors.mutedText}
+          style={[styles.input, styles.inputWithIcon]}
+        />
+        <Ionicons name="calendar-outline" size={18} color={colors.mutedText} style={styles.inputIcon} />
+      </View>
 
       <Text style={styles.fieldLabel}>{t('form.priority')}</Text>
       <View style={styles.chipRow}>
@@ -144,6 +154,9 @@ function createStyles(colors: ThemeColors) {
       color: colors.text,
     },
     textArea: { minHeight: 80, textAlignVertical: 'top' },
+    inputIconWrapper: { justifyContent: 'center', marginBottom: 14 },
+    inputWithIcon: { paddingRight: 40, marginBottom: 0 },
+    inputIcon: { position: 'absolute', right: 14 },
     row: { flexDirection: 'row', gap: 12 },
     rowField: { flex: 1 },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },

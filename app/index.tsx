@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -134,7 +135,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/profile')}
           accessibilityLabel={t('home.profile')}
         >
-          <Text style={styles.profileButtonIcon}>👤</Text>
+          <Ionicons name="person-outline" size={18} color={colors.text} />
         </Pressable>
       </View>
 
@@ -190,7 +191,6 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    profileButtonIcon: { fontSize: 18 },
     summaryRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
     summaryCard: {
       flex: 1,

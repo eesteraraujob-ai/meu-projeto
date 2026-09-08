@@ -73,8 +73,6 @@ const pt = {
   'alert.invalidTimeTitle': 'Hora inválida',
   'alert.invalidTimeMessage': 'Informe a hora de início no formato HH:MM.',
 
-  'profile.title': 'Perfil',
-  'profile.tasksSection': 'Tarefas',
   'profile.total': 'Total',
   'profile.completed': 'Concluídas',
   'profile.pending': 'Pendentes',
@@ -165,8 +163,6 @@ const en: Translations = {
   'alert.invalidTimeTitle': 'Invalid time',
   'alert.invalidTimeMessage': 'Enter the start time as HH:MM.',
 
-  'profile.title': 'Profile',
-  'profile.tasksSection': 'Tasks',
   'profile.total': 'Total',
   'profile.completed': 'Completed',
   'profile.pending': 'Pending',

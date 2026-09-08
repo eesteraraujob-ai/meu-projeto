@@ -1,5 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import TaskForm, { TaskFormValue } from '../../components/TaskForm';
@@ -82,7 +83,13 @@ export default function TaskDetailScreen() {
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top + 44 }]}>
-      <Text style={styles.title}>{t('taskDetail.title')}</Text>
+      <View style={styles.header}>
+        <Pressable style={styles.backButton} onPress={() => router.back()} accessibilityLabel={t('common.back')}>
+          <Ionicons name="chevron-back" size={20} color={colors.text} />
+        </Pressable>
+        <Text style={styles.title}>{t('taskDetail.title')}</Text>
+        <View style={styles.headerSpacer} />
+      </View>
       <TaskForm value={form} onChange={setForm} onSubmit={handleSave} submitLabel={t('taskDetail.save')} />
     </ScrollView>
   );
@@ -91,6 +98,23 @@ export default function TaskDetailScreen() {
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, padding: 16, backgroundColor: colors.background },
-    title: { fontSize: 24, fontWeight: '700', marginBottom: 16, color: colors.text },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 16,
+    },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.cardBorder,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerSpacer: { width: 36 },
+    title: { fontSize: 18, fontWeight: '700', color: colors.text },
   });
 }
